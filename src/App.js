@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { useForm } from 'react-hook-form'
-import { Button, Container, TextField, Grid } from '@material-ui/core'
+import { Button, Container, TextField, Grid, Fab } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import './App.css'
 
@@ -11,7 +11,9 @@ function App() {
 
   const onSubmit = (data) => {
     console.log(data)
-    console.log(formState)
+    // console.log(formState)
+    const fileName = data['file-upload'][0].name
+    console.log("🚀 ~ file: App.js ~ line 16 ~ onSubmit ~ file", fileName)
   }
 
   const handleReset = () => {
@@ -32,7 +34,7 @@ function App() {
                   required: true,
                   pattern: {
                     value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
-                    message: "Email is not valid."
+                    message: "Email Invalid."
                   }
                 })
               }}
@@ -40,11 +42,22 @@ function App() {
               error={!!errors.email}
               helperText={errors.email && errors.email.message}
             />
-
-            {errors.email && <p>{errors.email.message}</p>}
           </Grid>
           <Grid item xs={6}>
-            <Button
+            <label htmlFor="file-upload">
+              <input ref={register}
+                id="file-upload"
+                name="file-upload"
+                type="file"
+                style={{ display: 'none' }}
+              ></input>
+              <Fab color="primary" aria-label="add" size="small" component="span">
+                <AddIcon />
+              </Fab>
+            </label>
+
+
+            {/* <Button
               style={{ textTransform: 'none' }}
               variant="contained"
               color="primary"
@@ -52,15 +65,18 @@ function App() {
               startIcon={<AddIcon />}
             >
               Upload File
-            </Button>
+            </Button> */}
           </Grid>
           <Grid item xs={12}>
             <Button color="primary" disabled={!formState.isDirty || watchAllFields.email === ""} onClick={handleReset}>Reset</Button>
             <Button color="primary" type="submit">Email</Button>
           </Grid>
         </Grid>
+
+        {errors.email && <p>{errors.email.message}</p>}
+
       </form>
-    </Container>
+    </Container >
   )
 }
 
