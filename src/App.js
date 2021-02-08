@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { Button, Container, TextField, Grid, Fab } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
@@ -6,8 +6,24 @@ import './App.css'
 
 function App() {
   const emailInputRef = useRef()
+  const [items, setItems] = useState([])
+  const [error, setError] = useState(null)
+  const [isLoaded, setIsLoaded] = useState(false)
   const { register, handleSubmit, errors, formState, reset, watch } = useForm()
   const watchAllFields = watch()
+
+  useEffect(() => {
+    fetch("https://sprout-scientific-test.glitch.me/getDreams", {})
+      .then(res => res.json())
+      .then(response => {
+        setIsLoaded(true)
+        setItems(response)
+      },
+        (error) => {
+          setIsLoaded(true)
+          setError(error)
+        })
+  }, [])
 
   const onSubmit = (data) => {
     console.log(data)
@@ -20,6 +36,23 @@ function App() {
     reset()
     emailInputRef.current.focus()
   }
+
+  let emailList
+
+  if (error) {
+    emailList = <div>Error: {error.message}</div>
+  } else if (!isLoaded) {
+    emailList = <div>Loading...</div>
+  } else (
+    emailList =
+    <ul>
+      {items.map(item =>
+        <li key={item.id}>
+          {item.id} {item.email} {item.file_name} {item.datetime}
+        </li>)}
+    </ul>
+  )
+
 
   return (
 
@@ -76,6 +109,9 @@ function App() {
         {errors.email && <p>{errors.email.message}</p>}
 
       </form>
+
+
+      {emailList}
     </Container >
   )
 }
