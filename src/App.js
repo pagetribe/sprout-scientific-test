@@ -12,24 +12,52 @@ function App() {
   const { register, handleSubmit, errors, formState, reset, watch } = useForm()
   const watchAllFields = watch()
 
-  useEffect(() => {
-    fetch("https://sprout-scientific-test.glitch.me/getDreams", {})
+  const handleServerErrors = (res) => {
+    if (!res.ok) { throw new Error(`Network response was not ok: ${res.status}`) }
+    return res
+  }
+
+  const fetchSubmissions = () => {
+    fetch("https://sprout-scientific-test.glitch.me/getEmails", {})
+      .then(handleServerErrors)
       .then(res => res.json())
       .then(response => {
         setIsLoaded(true)
         setItems(response)
+        setError(null)
       },
         (error) => {
           setIsLoaded(true)
           setError(error)
         })
-  }, [])
+  }
+
+
+  useEffect(() => { fetchSubmissions() }, [])
 
   const onSubmit = (data) => {
     console.log(data)
     // console.log(formState)
     const fileName = data['file-upload'][0].name
-    console.log("🚀 ~ file: App.js ~ line 16 ~ onSubmit ~ file", fileName)
+    const email = data.email
+    const bodyData = { email: email, file_name: fileName }
+    console.log(bodyData)
+
+    fetch("https://sprout-scientific-test.glitch.me/addEmail", {
+      method: "POST",
+      body: JSON.stringify(bodyData),
+      headers: { "Content-Type": "application/json" }
+    })
+      .then(handleServerErrors)
+      .then(res => res.json())
+      .then(response => {
+        console.log(JSON.stringify(response))
+        fetchSubmissions()
+      },
+        (error) => {
+          console.log('post errror: ', error)
+        }
+      )
   }
 
   const handleReset = () => {
@@ -48,7 +76,7 @@ function App() {
     <ul>
       {items.map(item =>
         <li key={item.id}>
-          {item.id} {item.email} {item.file_name} {item.datetime}
+          {item.id} {item.email} {item.file_name} {new Date(`${item.created_at} UTC`).toLocaleString()}
         </li>)}
     </ul>
   )
