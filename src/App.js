@@ -1,14 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
-import { Button, Container, TextField, Grid, Fab } from '@material-ui/core'
+import axios from 'axios'
+import { Button, Container, TextField, Grid, Fab, Grow } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import './App.css'
+import LinearProgressWithLabel from './components/LinearProgressWithLabel'
 
 function App() {
   const emailInputRef = useRef()
   const [items, setItems] = useState([])
   const [error, setError] = useState(null)
   const [isLoaded, setIsLoaded] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [fileName, setFileName] = useState(null)
+  const [showProgress, setShowProgress] = useState(false)
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false)
+
   const { register, handleSubmit, errors, formState, reset, watch } = useForm()
   const watchAllFields = watch()
 
@@ -18,18 +25,29 @@ function App() {
   }
 
   const fetchSubmissions = () => {
-    fetch("https://sprout-scientific-test.glitch.me/getEmails", {})
-      .then(handleServerErrors)
-      .then(res => res.json())
+    axios.get("https://sprout-scientific-test.glitch.me/getEmails")
       .then(response => {
         setIsLoaded(true)
-        setItems(response)
+        setItems(response.data)
         setError(null)
-      },
-        (error) => {
-          setIsLoaded(true)
-          setError(error)
-        })
+      })
+      .catch(error => {
+        console.error(error)
+        setIsLoaded(true)
+        setError(error)
+      })
+    // fetch("https://sprout-scientific-test.glitch.me/getEmails", {})
+    //   .then(handleServerErrors)
+    //   .then(res => res.json())
+    //   .then(response => {
+    //     setIsLoaded(true)
+    //     setItems(response)
+    //     setError(null)
+    //   },
+    //     (error) => {
+    //       setIsLoaded(true)
+    //       setError(error)
+    //     })
   }
 
 
@@ -37,27 +55,66 @@ function App() {
 
   const onSubmit = (data) => {
     console.log(data)
-    // console.log(formState)
-    const fileName = data['file-upload'][0].name
-    const email = data.email
-    const bodyData = { email: email, file_name: fileName }
-    console.log(bodyData)
+    if (data['file-upload'][0]) {
+      setFileName(data['file-upload'][0].name)
+      setShowProgress(true)
+    }
+    const formData = new FormData()
+    formData.append("email", data.email)
+    if (data['file-upload']) {
+      formData.append("file", data['file-upload'][0])
+    }
 
-    fetch("https://sprout-scientific-test.glitch.me/addEmail", {
-      method: "POST",
-      body: JSON.stringify(bodyData),
-      headers: { "Content-Type": "application/json" }
-    })
-      .then(handleServerErrors)
-      .then(res => res.json())
+    const config = {
+      onUploadProgress: (progressEvent) => {
+        var percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total)
+        setProgress(percentCompleted)
+        console.log(percentCompleted)
+      }
+    }
+
+    const resetForm = () => {
+      //reset form
+      reset()
+      setFileName(null)
+      setShowProgress(false)
+      emailInputRef.current.focus()
+    }
+
+    axios.post("https://sprout-scientific-test.glitch.me/addEmail", formData, config)
       .then(response => {
         console.log(JSON.stringify(response))
+        resetForm()
+        setShowSuccessMessage(true)
         fetchSubmissions()
-      },
-        (error) => {
-          console.log('post errror: ', error)
+        setTimeout(() => setShowSuccessMessage(false), 4000)
+      })
+      .catch(error => {
+        if (!window.navigator.onLine) {
+          console.log('Attachment failed to upload. Check you connection.')
+        } else {
+          console.log('Server failure. Try again.')
         }
-      )
+        // if (!!error.isAxiosError && !error.response) {
+        console.log('post error: ', error)
+      })
+
+
+
+    // fetch("https://sprout-scientific-test.glitch.me/addEmail", {
+    //   method: "POST",
+    //   body: formData
+    // })
+    //   .then(handleServerErrors)
+    //   .then(res => res.json())
+    //   .then(response => {
+    //     console.log(JSON.stringify(response))
+    //     fetchSubmissions()
+    //   },
+    //     (error) => {
+    //       console.log('post errror: ', error)
+    //     }
+    //   )
   }
 
   const handleReset = () => {
@@ -70,7 +127,7 @@ function App() {
   if (error) {
     emailList = <div>Error: {error.message}</div>
   } else if (!isLoaded) {
-    emailList = <div>Loading...</div>
+    emailList = <div>Loading submissions...</div>
   } else (
     emailList =
     <ul>
@@ -84,7 +141,7 @@ function App() {
 
   return (
 
-    <Container maxWidth="sm" align="center">
+    <Container maxWidth="sm" align="center" spacing={3}>
       <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
         <Grid container spacing={3}>
           <Grid item xs={6}>
@@ -128,6 +185,18 @@ function App() {
               Upload File
             </Button> */}
           </Grid>
+
+          {showProgress &&
+            <Grid container>
+              <Grid item xs={12} style={{ textAlign: "left" }}>
+                {fileName && <p>{fileName}</p>}
+              </Grid>
+              <Grid item xs={12}>
+                <LinearProgressWithLabel value={progress} />
+              </Grid>
+            </Grid>
+          }
+
           <Grid item xs={12}>
             <Button color="primary" disabled={!formState.isDirty || watchAllFields.email === ""} onClick={handleReset}>Reset</Button>
             <Button color="primary" type="submit">Email</Button>
@@ -135,9 +204,9 @@ function App() {
         </Grid>
 
         {errors.email && <p>{errors.email.message}</p>}
+        {showSuccessMessage && <p>Success! Email Sent</p>}
 
       </form>
-
 
       {emailList}
     </Container >
