@@ -184,10 +184,13 @@ function App() {
               </Grid>
             </Grid>
           </Grow>
-
-          <Grid item xs={12}>
-            <Button color="primary" disabled={!formState.isDirty || watchAllFields.email === ""} onClick={handleReset}>Reset</Button>
-            <Button color="primary" type="submit">Email</Button>
+          <Grid container>
+            <Grid item xs={6}>
+              <Button variant="contained" disabled={!formState.isDirty || watchAllFields.email === ""} onClick={handleReset}>Reset</Button>
+            </Grid>
+            <Grid item xs={6}>
+              <Button color="primary" variant="contained" type="submit">Email</Button>
+            </Grid>
           </Grid>
         </Grid>
 
