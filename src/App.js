@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import axios from 'axios'
-import { Button, Container, TextField, Grid, Fab, Grow } from '@material-ui/core'
+import { Button, Container, TextField, Grid, Fab, Grow, CircularProgress } from '@material-ui/core'
 import AddIcon from '@material-ui/icons/Add'
 import './App.css'
 import LinearProgressWithLabel from './components/LinearProgressWithLabel'
+import SubmissionsList from './components/SubmissionsList'
 
 function App() {
   const emailInputRef = useRef()
@@ -74,7 +75,6 @@ function App() {
     }
 
     const resetForm = () => {
-      //reset form
       reset()
       setFileName(null)
       setShowProgress(false)
@@ -122,21 +122,21 @@ function App() {
     emailInputRef.current.focus()
   }
 
-  let emailList
+  // let emailList
 
-  if (error) {
-    emailList = <div>Error: {error.message}</div>
-  } else if (!isLoaded) {
-    emailList = <div>Loading submissions...</div>
-  } else (
-    emailList =
-    <ul>
-      {items.map(item =>
-        <li key={item.id}>
-          {item.id} {item.email} {item.file_name} {new Date(`${item.created_at} UTC`).toLocaleString()}
-        </li>)}
-    </ul>
-  )
+  // if (error) {
+  //   emailList = <div>Error: {error.message}</div>
+  // } else if (!isLoaded) {
+  //   emailList = <div><CircularProgress /> Loading submissions...</div>
+  // } else (
+  //   emailList =
+  //   <ul>
+  //     {items.map(item =>
+  //       <li key={item.id}>
+  //         {item.id} {item.email} {item.file_name} {new Date(`${item.created_at} UTC`).toLocaleString()}
+  //       </li>)}
+  //   </ul>
+  // )
 
 
   return (
@@ -156,7 +156,6 @@ function App() {
                   }
                 })
               }}
-              // autoFocus
               error={!!errors.email}
               helperText={errors.email && errors.email.message}
             />
@@ -173,20 +172,9 @@ function App() {
                 <AddIcon />
               </Fab>
             </label>
-
-
-            {/* <Button
-              style={{ textTransform: 'none' }}
-              variant="contained"
-              color="primary"
-              // className={classes.button}
-              startIcon={<AddIcon />}
-            >
-              Upload File
-            </Button> */}
           </Grid>
 
-          {showProgress &&
+          <Grow in={showProgress}>
             <Grid container>
               <Grid item xs={12} style={{ textAlign: "left" }}>
                 {fileName && <p>{fileName}</p>}
@@ -195,7 +183,7 @@ function App() {
                 <LinearProgressWithLabel value={progress} />
               </Grid>
             </Grid>
-          }
+          </Grow>
 
           <Grid item xs={12}>
             <Button color="primary" disabled={!formState.isDirty || watchAllFields.email === ""} onClick={handleReset}>Reset</Button>
@@ -204,11 +192,14 @@ function App() {
         </Grid>
 
         {errors.email && <p>{errors.email.message}</p>}
-        {showSuccessMessage && <p>Success! Email Sent</p>}
+
+        <Grow in={showSuccessMessage}>
+          <p>Success! Email Sent</p>
+        </Grow>
 
       </form>
-
-      {emailList}
+      <SubmissionsList error={error} items={items} isLoaded={isLoaded} />
+      {/* {emailList} */}
     </Container >
   )
 }
