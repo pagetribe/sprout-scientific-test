@@ -16,6 +16,7 @@ import Fade from '@material-ui/core/Fade'
 const useStyles = makeStyles({
   table: {
     minWidth: 550,
+    backgroundColor: '#eceff1',
   },
   tablecell: {
     fontSize: '0.6em',
@@ -81,4 +82,10 @@ export default function SubmissionsList(props) {
   return (
     renderContent()
   )
+}
+
+SubmissionsList.propTypes = {
+  error: PropTypes.object,
+  items: PropTypes.array.isRequired,
+  isLoaded: PropTypes.bool.isRequired
 }
