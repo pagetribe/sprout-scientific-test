@@ -1,6 +1,6 @@
 # sprout-scientific-test
 
-Note if you run the code locally there is an error in the console `index.js:1 Warning: findDOMNode is deprecated in StrictMode.` this is a known issue and will be fixed in the next version of material-ui.
+**Note if you run the code locally there is an error in the console `index.js:1 Warning: findDOMNode is deprecated in StrictMode.` this is a known issue and will be fixed in the next version of material-ui.**
 
 Problem Statement:
 Create a UI component which has the following capabilities.
