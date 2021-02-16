@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import axios from 'axios'
-import { Button, Container, Box, TextField, Grid, Fab, Grow, Typography, createMuiTheme, ThemeProvider, Divider } from '@material-ui/core'
+import { Button, Container, Box, TextField, Grid, Fab, Grow, Typography, createMuiTheme, ThemeProvider, Divider, makeStyles, Paper } from '@material-ui/core'
 import teal from '@material-ui/core/colors/teal'
 import AddIcon from '@material-ui/icons/Add'
 import './App.css'
@@ -119,14 +119,38 @@ function App() {
     }
   }
 
+
+
+
+  const useStyles = makeStyles((theme) => ({
+    root: {
+      flexGrow: 1,
+    },
+    backgroundContainer: {
+      background: "#E5E3E3",
+      [theme.breakpoints.down('xs')]: {
+        marginTop: "16px",
+      },
+      marginTop: "30px",
+      maxWidth: "670px",
+      padding: "30px",
+    },
+    uploadButton: {
+      [theme.breakpoints.down('xs')]: {
+        marginRight: "0px",
+      },
+    }
+  }))
+
+  const classes = useStyles();
+
   return (
     <ThemeProvider theme={theme}>
-      <Container align="center" justify="center">
-        <Box width={631} bgcolor="#E5E3E3" mt={5} p={5}>
-          <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-
-            <Grid container spacing={3}>
-              <Grid item xs={6}>
+      <div className={classes.root}>
+        <Box display="flex" justifyContent="center">
+          <Grid container item spacing={3} xs={11} sm={10} className={classes.backgroundContainer}>
+            <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)} style={{ display: 'contents' }}>
+              <Grid item xs={8} sm={7}>
                 <TextField id="standard-basic" label="Enter an email ID" name="email" type="email" fullWidth
                   inputRef={(e) => {
                     emailInputRef.current = e
@@ -142,8 +166,8 @@ function App() {
                   helperText={errors.email && errors.email.message}
                 />
               </Grid>
-              <Grid item xs={6} style={{ textAlign: "right" }}>
-                <Box mt={1} mr={2}>
+              <Grid item xs={4} sm={5} style={{ textAlign: "right" }}>
+                <Box mt={1} mr={2} className={classes.uploadButton}>
                   <label htmlFor="file-upload">
                     <input ref={register}
                       id="file-upload"
@@ -157,8 +181,6 @@ function App() {
                   </label>
                 </Box>
               </Grid>
-
-
 
               <Box width='100%' px={2} py={5}>
                 <Grid container>
@@ -181,29 +203,6 @@ function App() {
                 </Grid>
               </Box>
 
-
-              {/* <Grid container>
-                <Grow in={showProgress}>
-                  <Box width='100%' px={2} pt={8}>
-                    <Grid item xs={12} style={{ textAlign: "left" }}>
-                      {fileName && <Typography variant="subtitle2">{fileName}</Typography>}
-                    </Grid>
-                    <Grid item xs={12}>
-                      <LinearProgressWithLabel value={progress} />
-                    </Grid>
-                  </Box>
-                </Grow>
-
-                <Grid item xs={12}>
-                  <Box width='100%' px={2} pt={8}>
-                    <Grow in={showSuccessMessage}>
-                      <Typography variant="subtitle2">Success! Email Sent</Typography>
-                    </Grow>
-                    {errors.email && <Typography variant="subtitle2">{errors.email.message}</Typography>}
-                  </Box>
-                </Grid>
-              </Grid> */}
-
               <Grid container spacing={3}>
                 <Grid item xs={6} container justify="flex-end">
                   <Button color="primary" variant="contained" disableElevation disabled={!formState.isDirty || watchAllFields.email === ""} onClick={handleReset}>Reset</Button>
@@ -212,101 +211,125 @@ function App() {
                   <Button color="primary" variant="contained" type="submit">Email</Button>
                 </Grid>
               </Grid>
+            </form>
+
+
+          </Grid>{/* grey wrapper background div */}
+
+        </Box>
+
+        <Box display="flex" justifyContent="center">
+          <Grid container item spacing={3} xs={11} sm={10}>
+            <Grid item xs={12} style={{ textAlign: "center" }}>
+              <Box mt={8} mb={2}>
+                <Box mb={4}><Divider variant="middle" /></Box>
+                <Box mb={2}>
+                  <Typography variant="subtitle2" gutterBottom>
+                    Submissions List
+                  </Typography>
+                </Box>
+                <SubmissionsList error={error} items={items} isLoaded={isLoaded} />
+                {/* <Grid item style={{ textAlign: "center" }}>
+                </Grid> */}
+              </Box>
             </Grid>
+          </Grid>
+        </Box>
 
-          </form>
-
-          <Box mt={8}>
-            <Box mb={4}><Divider variant="middle" /></Box>
-            <Box mb={2}>
-              <Typography variant="subtitle2" gutterBottom>
-                Submissions List
-              </Typography>
-            </Box>
-            <SubmissionsList error={error} items={items} isLoaded={isLoaded} />
-          </Box>
-        </Box >
-      </Container >
+      </div>
     </ThemeProvider >
-
-    // <Box
-    //   m="auto"
-    //   width={671} height={400}
-    //   bgcolor="#E5E3E3"
-    // >
-    //   <div>asdfasdfasdf</div>
-    // </Box>
-    // <Container maxWidth="sm" align="center" spacing={3} mt={5}>
-
-    // <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
-    //   <Grid container spacing={3}>
-    //     <Grid item xs={6}>
-    //       <TextField id="standard-basic" label="Enter an email ID" name="email" type="email"
-    //         inputRef={(e) => {
-    //           emailInputRef.current = e
-    //           register(e, {
-    //             required: true,
-    //             pattern: {
-    //               value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
-    //               message: "Email Invalid."
-    //             }
-    //           })
-    //         }}
-    //         error={!!errors.email}
-    //         helperText={errors.email && errors.email.message}
-    //       />
-    //     </Grid>
-    //     <Grid item xs={6}>
-    //       <label htmlFor="file-upload">
-    //         <input ref={register}
-    //           id="file-upload"
-    //           name="file-upload"
-    //           type="file"
-    //           style={{ display: 'none' }}
-    //         ></input>
-    //         <Fab color="primary" aria-label="add" size="small" component="span">
-    //           <AddIcon />
-    //         </Fab>
-    //       </label>
-    //     </Grid>
-
-    //     <Grow in={showProgress}>
-    //       <Grid container>
-    //         <Grid item xs={12} style={{ textAlign: "left" }}>
-    //           {fileName && <p>{fileName}</p>}
-    //         </Grid>
-    //         <Grid item xs={12}>
-    //           <LinearProgressWithLabel value={progress} />
-    //         </Grid>
-    //       </Grid>
-    //     </Grow>
-    //     <Grid container>
-    //       <Grid item xs={6}>
-    //         <Button variant="contained" disabled={!formState.isDirty || watchAllFields.email === ""} onClick={handleReset}>Reset</Button>
-    //       </Grid>
-    //       <Grid item xs={6}>
-    //         <Button color="primary" variant="contained" type="submit">Email</Button>
-    //       </Grid>
-    //     </Grid>
-    //   </Grid>
-
-    //   {errors.email && <p>{errors.email.message}</p>}
-
-    //   <Grow in={showSuccessMessage}>
-    //     <p>Success! Email Sent</p>
-    //   </Grow>
-
-    // </form>
-
-    //   <Box mt={8} textAlign="left">
-    //     <Typography variant="subtitle2" gutterBottom>
-    //       Submissions List
-    //     </Typography>
-    //     <SubmissionsList error={error} items={items} isLoaded={isLoaded} />
-    //   </Box>
-
-    // </Container >
   )
+
+
+
+
+  // return (
+  //   <ThemeProvider theme={theme}>
+  //     <Container align="center" justify="center">
+  //       <Box width={631} bgcolor="#E5E3E3" mt={5} p={5}>
+  //         <form noValidate autoComplete="off" onSubmit={handleSubmit(onSubmit)}>
+
+  //           <Grid container spacing={3}>
+  //             <Grid item xs={6}>
+  //               <TextField id="standard-basic" label="Enter an email ID" name="email" type="email" fullWidth
+  //                 inputRef={(e) => {
+  //                   emailInputRef.current = e
+  //                   register(e, {
+  //                     required: true,
+  //                     pattern: {
+  //                       value: /^[^@ ]+@[^@ ]+\.[^@ .]{2,}$/,
+  //                       message: "Email Invalid."
+  //                     }
+  //                   })
+  //                 }}
+  //                 error={!!errors.email}
+  //                 helperText={errors.email && errors.email.message}
+  //               />
+  //             </Grid>
+  //             <Grid item xs={6} style={{ textAlign: "right" }}>
+  //               <Box mt={1} mr={2}>
+  //                 <label htmlFor="file-upload">
+  //                   <input ref={register}
+  //                     id="file-upload"
+  //                     name="file-upload"
+  //                     type="file"
+  //                     style={{ display: 'none' }}
+  //                   ></input>
+  //                   <Fab color="primary" aria-label="add" size="small" component="span">
+  //                     <AddIcon />
+  //                   </Fab>
+  //                 </label>
+  //               </Box>
+  //             </Grid>
+
+
+  //             <Box width='100%' px={2} py={5}>
+  //               <Grid container>
+  //                 <Grow in={showProgress}>
+  //                   <Grid container>
+  //                     <Grid item xs={12} style={{ textAlign: "left" }}>
+  //                       <Typography variant="subtitle2">{fileName ? fileName : 'no file'}</Typography>
+  //                     </Grid>
+  //                     <Grid item xs={12}>
+  //                       <LinearProgressWithLabel value={progress} />
+  //                     </Grid>
+  //                   </Grid>
+  //                 </Grow>
+  //                 <Grow in={showSuccessMessage}>
+  //                   <Grid item xs={12}>
+  //                     <Typography variant="subtitle2">Success! Email Sent</Typography>
+  //                   </Grid>
+  //                 </Grow>
+  //                 {errors.email && <Typography variant="subtitle2">{errors.email.message}</Typography>}
+  //               </Grid>
+  //             </Box>
+
+
+  //             <Grid container spacing={3}>
+  //               <Grid item xs={6} container justify="flex-end">
+  //                 <Button color="primary" variant="contained" disableElevation disabled={!formState.isDirty || watchAllFields.email === ""} onClick={handleReset}>Reset</Button>
+  //               </Grid>
+  //               <Grid item xs={6} container justify="flex-start">
+  //                 <Button color="primary" variant="contained" type="submit">Email</Button>
+  //               </Grid>
+  //             </Grid>
+  //           </Grid>
+
+  //         </form>
+
+  //         <Box mt={8}>
+  //           <Box mb={4}><Divider variant="middle" /></Box>
+  //           <Box mb={2}>
+  //             <Typography variant="subtitle2" gutterBottom>
+  //               Submissions List
+  //             </Typography>
+  //           </Box>
+  //           <SubmissionsList error={error} items={items} isLoaded={isLoaded} />
+  //         </Box>
+  //       </Box >
+  //     </Container >
+  //   </ThemeProvider >
+  // )
 }
 
 export default App

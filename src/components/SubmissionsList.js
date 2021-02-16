@@ -11,6 +11,7 @@ import TableRow from '@material-ui/core/TableRow'
 import Paper from '@material-ui/core/Paper'
 import Grid from '@material-ui/core/Grid'
 import Fade from '@material-ui/core/Fade'
+import Typography from '@material-ui/core/Typography'
 
 
 const useStyles = makeStyles({
@@ -72,7 +73,13 @@ export default function SubmissionsList(props) {
       return renderLoadingSpinner()
     }
     else if (hasNoSubmissions) {
-      return <Grid item xs={12}>No submissions yet. Enter an email and add a file.</Grid >
+      return (
+        <Fade in={hasNoSubmissions}>
+          <Typography variant="body2" color="textSecondary">
+            No submissions yet. <br />Enter an email and add a file.
+          </Typography>
+        </Fade >
+      )
     }
     else {
       return renderTable()
