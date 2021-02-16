@@ -16,7 +16,7 @@ import Typography from '@material-ui/core/Typography'
 
 const useStyles = makeStyles({
   table: {
-    minWidth: 550,
+    minWidth: 400,
     backgroundColor: '#eceff1',
   },
   tablecell: {
@@ -24,7 +24,6 @@ const useStyles = makeStyles({
     textAlign: 'left'
   },
 });
-
 
 export default function SubmissionsList(props) {
   const classes = useStyles()
@@ -44,19 +43,19 @@ export default function SubmissionsList(props) {
         <Table className={classes.table} size="small" aria-label="submission list">
           <TableHead>
             <TableRow>
-              <TableCell className={classes.tablecell} style={{ width: '5%' }} >ID</TableCell>
-              <TableCell className={classes.tablecell} align="right">email</TableCell>
-              <TableCell className={classes.tablecell} align="right">file name</TableCell>
-              <TableCell className={classes.tablecell} align="right">create at</TableCell>
+              <TableCell className={classes.tablecell}>ID</TableCell>
+              <TableCell className={classes.tablecell}>email</TableCell>
+              <TableCell className={classes.tablecell}>file name</TableCell>
+              <TableCell className={classes.tablecell}>create at</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {items.map((row) => (
               <TableRow key={row.id} >
-                <TableCell className={classes.tablecell} style={{ width: '5%' }}>{row.id}</TableCell>
-                <TableCell className={classes.tablecell} align="right">{row.email}</TableCell>
-                <TableCell className={classes.tablecell} align="right">{row.file_name}</TableCell>
-                <TableCell className={classes.tablecell} align="right">{new Date(`${row.created_at} UTC`).toLocaleString()}</TableCell>
+                <TableCell className={classes.tablecell}>{row.id}</TableCell>
+                <TableCell className={classes.tablecell}>{row.email}</TableCell>
+                <TableCell className={classes.tablecell}>{row.file_name}</TableCell>
+                <TableCell className={classes.tablecell}>{new Date(`${row.created_at} UTC`).toLocaleString()}</TableCell>
               </TableRow>
             ))}
           </TableBody>
@@ -67,7 +66,7 @@ export default function SubmissionsList(props) {
 
   const renderContent = () => {
     if (error) {
-      return <Grid item xs={12}>Error: {error.message}</Grid>
+      return <Typography variant="body2" color="error">{error.message}</Typography>
     }
     else if (!isLoaded) {
       return renderLoadingSpinner()
@@ -76,7 +75,7 @@ export default function SubmissionsList(props) {
       return (
         <Fade in={hasNoSubmissions}>
           <Typography variant="body2" color="textSecondary">
-            No submissions yet. <br />Enter an email and add a file.
+            No submissions yet. <br />Enter an email and add a file. <br />Your submissions will show here.
           </Typography>
         </Fade >
       )
