@@ -71,7 +71,7 @@ function App() {
         resetForm()
         setShowSuccessMessage(true)
         fetchSubmissions()
-        setTimeout(() => setShowSuccessMessage(false), 4000)
+        setTimeout(() => setShowSuccessMessage(false), 3000)
         setError(null)
       })
       .catch(error => {
