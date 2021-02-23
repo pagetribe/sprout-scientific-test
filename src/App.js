@@ -30,7 +30,7 @@ function App() {
         setfetchSubmissionsError(null)
       })
       .catch(error => {
-        console.error(error)
+        // console.error(error)
         setIsLoaded(true)
         setfetchSubmissionsError(error)
       })
