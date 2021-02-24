@@ -36,7 +36,32 @@ function App() {
       })
   }
 
-  useEffect(() => { fetchSubmissions() }, [])
+  // useEffect(() => { fetchSubmissions() }, [])
+  useEffect(() => {
+    const source = axios.CancelToken.source()
+    const fetchSubmissions = async () => {
+      try {
+        const response = await axios.get("https://sprout-scientific-test.glitch.me/getEmails", {
+          cancelToken: source.token
+        })
+        setIsLoaded(true)
+        setItems(response.data)
+        setfetchSubmissionsError(null)
+      } catch (error) {
+        if (axios.isCancel(error)) {
+          // console.log('cancelled get request - caught cancel')
+        } else {
+          setIsLoaded(true)
+          setfetchSubmissionsError(error)
+        }
+      }
+    }
+    fetchSubmissions()
+    return () => {
+      source.cancel()
+    }
+
+  }, [])
 
   const onSubmit = (data) => {
     console.log(data)
@@ -173,6 +198,7 @@ function App() {
                 <Box mt={1} mr={2} className={classes.uploadButton}>
                   <label htmlFor="file-upload">
                     <input ref={register}
+                      data-testid="file-upload"
                       id="file-upload"
                       name="file-upload"
                       type="file"
