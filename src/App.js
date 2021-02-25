@@ -92,7 +92,7 @@ function App() {
 
     axios.post("https://sprout-scientific-test.glitch.me/addEmail", formData, config)
       .then(response => {
-        console.log(JSON.stringify(response))
+        // console.log(JSON.stringify(response))
         resetForm()
         setShowSuccessMessage(true)
         fetchSubmissions()
@@ -225,7 +225,7 @@ function App() {
 
                 <Grow in={showSuccessMessage}>
                   <Grid item container xs={12} justify="center">
-                    <Typography variant="subtitle2">Success! Email Sent</Typography>
+                    <Typography variant="subtitle2">{showSuccessMessage ? 'Success! Email Sent' : '&nbsp'}</Typography>
                   </Grid>
                 </Grow>
 

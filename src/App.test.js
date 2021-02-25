@@ -64,9 +64,21 @@ describe("email form", () => {
       userEvent.type(screen.getByRole('textbox', { name: /email/i }), 'asdf@asdf.com')
       userEvent.click(screen.getByRole('button', { name: /email/i }))
       await waitFor(() => {
-        const successMessage = screen.getByText(/Success! Email Sent/i)
-        screen.debug()
-        expect(successMessage).toHaveStyle('visibility: visible')
+        expect(screen.queryByText(/Success! Email Sent/i)).toBeInTheDocument()
+      })
+    })
+
+    it('resets the form to empty values', async () => {
+      server.use(
+        rest.post("https://sprout-scientific-test.glitch.me/addEmail", (req, res, ctx) => {
+          return res(ctx.status(200))
+        })
+      )
+      render(<App />)
+      userEvent.type(screen.getByRole('textbox', { name: /email/i }), 'asdf@asdf.com')
+      userEvent.click(screen.getByRole('button', { name: /email/i }))
+      await waitFor(() => {
+        expect(screen.getByRole('textbox', { name: /email/i })).toHaveValue('')
       })
     })
 
