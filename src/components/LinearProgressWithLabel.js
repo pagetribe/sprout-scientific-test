@@ -21,7 +21,7 @@ const BorderLinearProgress = withStyles((theme) => ({
 
 export default function LinearProgressWithLabel(props) {
   return (
-    <Box display="flex" alignItems="center">
+    <Box display="flex" alignItems="center" data-testid="file-upload-progress">
       <Box width="100%" mr={1}>
         <BorderLinearProgress variant="determinate" {...props} />
       </Box>

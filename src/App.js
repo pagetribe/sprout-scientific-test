@@ -217,20 +217,19 @@ function App() {
                     <Grid item xs={12} style={{ textAlign: "left" }}>
                       <Typography variant="subtitle2">{fileName ? fileName : 'no file'}</Typography>
                     </Grid>
-                    <Grid item xs={12}>
-                      <LinearProgressWithLabel value={progress} />
+                    <Grid item xs={12} >
+                      {showProgress ? <LinearProgressWithLabel value={progress} /> : <>'&nbsp'</>}
                     </Grid>
                   </Grid>
                 </Grow>
 
                 <Grow in={showSuccessMessage}>
                   <Grid item container xs={12} justify="center">
-                    <Typography variant="subtitle2">{showSuccessMessage ? 'Success! Email Sent' : '&nbsp'}</Typography>
+                    <Typography variant="subtitle2">{showSuccessMessage ? 'Success! Email Sent' : <>'&nbsp'</>}</Typography>
                   </Grid>
                 </Grow>
 
                 <Grid item container xs={12} justify="center" style={{ textAlign: "center" }}>
-                  {/* {errors.email && <Typography variant="subtitle2" color="error">{errors.email.message}</Typography>} */}
                   {error && <Typography variant="subtitle2" color="error">{error.message}</Typography>}
                 </Grid>
               </Box>

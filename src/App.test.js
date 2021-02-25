@@ -63,8 +63,30 @@ describe("email form", () => {
       render(<App />)
       userEvent.type(screen.getByRole('textbox', { name: /email/i }), 'asdf@asdf.com')
       userEvent.click(screen.getByRole('button', { name: /email/i }))
+      // expect(await screen.findByText(/Success! Email Sent/i)).toBeInTheDocument()
       await waitFor(() => {
-        expect(screen.queryByText(/Success! Email Sent/i)).toBeInTheDocument()
+        expect(screen.getByText(/Success! Email Sent/i)).toBeInTheDocument()
+      })
+    })
+
+    it('shows loading bar', async () => {
+      server.use(
+        rest.post("https://sprout-scientific-test.glitch.me/addEmail", (req, res, ctx) => {
+          return res(ctx.status(200))
+        })
+      )
+      render(<App />)
+
+      userEvent.type(screen.getByRole('textbox', { name: /email/i }), 'asdf@asdf.com')
+      const file = new File(['test'], 'test.png', { type: 'image/png' })
+      const input = screen.getByTestId('file-upload')
+      userEvent.upload(input, file)
+
+      userEvent.click(screen.getByRole('button', { name: /email/i }))
+
+      // expect(await screen.findByTestId('file-upload-progress')).toBeInTheDocument()
+      await waitFor(() => {
+        expect(screen.getByTestId('file-upload-progress')).toBeInTheDocument()
       })
     })
 
